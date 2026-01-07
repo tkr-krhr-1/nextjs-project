@@ -1,20 +1,84 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+name: ✨ 機能・コンポーネント実装
+about: 新しい機能やコンポーネントを実装するための詳細テンプレート
+title: "[Feature] 機能名 - コンポーネント名"
+labels: ["feature", "frontend"]
+assignees: ""
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## 概要
+## 要求事項
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+### コンポーネント仕様
+- [ ] - [ ] - [ ]
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+### 表示要件
+- [ ]
+- [ ]
+- [ ]
+- [ ]
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+### UX要件
+- [ ]
+- [ ]
+- [ ]
+
+## コンポーネント構成
+
+src/app/_components/機能名/
+├── MainComponent.tsx    # メインコンポーネント
+├── SubComponent.tsx     # サブコンポーネント
+├── ...
+└── EmptyState.tsx       # 空状態表示
+
+## 実装タスク
+
+### - [ ] メインコンポーネントの実装
+- [ ]
+- [ ]
+- [ ]
+
+### - [ ] サブコンポーネントの実装
+- [ ]
+- [ ]
+- [ ]
+
+### - [ ] スタイリング・調整
+- [ ]
+- [ ]
+- [ ]
+
+### - [ ] テスト
+- [ ]
+- [ ]
+- [ ]
+
+### - [ ] デバッグ
+- [ ]
+- [ ]
+- [ ]
+
+### - [ ] リファクタリング
+- [ ]
+- [ ]
+- [ ]
+
+### - [ ] ドキュメント
+- [ ]
+- [ ]
+- [ ]
+
+## 技術詳細
+- データ取得: 
+- 状態管理: 
+- スタイリング: 
+- パフォーマンス: 
+
+## 成功基準 (Definition of Done)
+- [ ]
+- [ ]
+- [ ]
+
+## 依存関係
+
+## 関連パッケージ
