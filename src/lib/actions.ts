@@ -43,9 +43,20 @@ export async function createPost(prevState: ActionState, formData: FormData): Pr
     return { error: "認証に失敗しました。パスワードが正しくありません。" };
   }
 
-  const filePath = path.join(postsDirectory, `${slug}.mdx`);
+  // 3. 保存先ディレクトリの準備
+  try {
+    if (!fs.existsSync(postsDirectory)) {
+      fs.mkdirSync(postsDirectory, { recursive: true });
+    }
+  } catch (error) {
+    console.error("Failed to create directory:", error);
+    return { error: "保存先ディレクトリの作成に失敗しました。" };
+  }
 
-  // 3. 重複チェック
+  const filePath = path.join(postsDirectory, `${slug}.mdx`);
+  const tempFilePath = `${filePath}.tmp`;
+
+  // 4. 重複チェック
   if (fs.existsSync(filePath)) {
     return {
       fieldErrors: {
@@ -54,7 +65,7 @@ export async function createPost(prevState: ActionState, formData: FormData): Pr
     };
   }
 
-  // 4. ファイル生成
+  // 5. ファイル生成 (アトミックな書き込み)
   try {
     const tagsArray = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
 
@@ -67,17 +78,24 @@ export async function createPost(prevState: ActionState, formData: FormData): Pr
       coverImage: coverImage || "",
     });
 
-    if (!fs.existsSync(postsDirectory)) {
-      fs.mkdirSync(postsDirectory, { recursive: true });
-    }
-
-    fs.writeFileSync(filePath, fileContent, "utf8");
+    // 一時ファイルに書き込み
+    fs.writeFileSync(tempFilePath, fileContent, "utf8");
+    
+    // 一時ファイルを本番ファイルにリネーム (アトミック)
+    fs.renameSync(tempFilePath, filePath);
   } catch (error) {
     console.error("Failed to create post:", error);
-    return { error: "記事の保存中にエラーが発生しました。" };
+    
+    // 一時ファイルが残っている場合は削除を試みる
+    if (fs.existsSync(tempFilePath)) {
+      try { fs.unlinkSync(tempFilePath); } catch (e) { console.error("Failed to delete temp file:", e); }
+    }
+    
+    return { error: "記事の保存中にエラーが発生しました。ディスク容量や権限を確認してください。" };
   }
 
-  // 5. キャッシュ更新とリダイレクト
+  // 6. キャッシュ更新とリダイレクト
   revalidatePath("/blog");
+  revalidatePath(`/blog/${slug}`);
   redirect("/blog");
 }
