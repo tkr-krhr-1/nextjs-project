@@ -15,6 +15,10 @@ export type ActionState = {
     title?: string[];
     slug?: string[];
     description?: string[];
+    date?: string[];
+    category?: string[];
+    tags?: string[];
+    coverImage?: string[];
     content?: string[];
     password?: string[];
   };
@@ -32,7 +36,7 @@ export async function createPost(prevState: ActionState, formData: FormData): Pr
     };
   }
 
-  const { title, slug, description, content, password } = validatedFields.data;
+  const { title, slug, description, date, category, tags, coverImage, content, password } = validatedFields.data;
 
   // 2. 認証チェック
   if (password !== process.env.ADMIN_KEY) {
@@ -52,10 +56,15 @@ export async function createPost(prevState: ActionState, formData: FormData): Pr
 
   // 4. ファイル生成
   try {
+    const tagsArray = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
+
     const fileContent = matter.stringify(content, {
       title,
-      date: new Date().toISOString().split("T")[0],
+      date,
       description,
+      category,
+      tags: tagsArray,
+      coverImage: coverImage || "",
     });
 
     if (!fs.existsSync(postsDirectory)) {

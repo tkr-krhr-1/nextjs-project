@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 export default function NewPostPage() {
   const [state, formAction, isPending] = useActionState(createPost, null);
   const [content, setContent] = useState("");
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4">
@@ -103,6 +104,82 @@ export default function NewPostPage() {
               />
               {state?.fieldErrors?.description && (
                 <p className="text-red-500 text-xs mt-1">{state.fieldErrors.description[0]}</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+                  公開日
+                </label>
+                <input
+                  type="date"
+                  id="date"
+                  name="date"
+                  required
+                  defaultValue={today}
+                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none ${
+                    state?.fieldErrors?.date ? "border-red-500" : ""
+                  }`}
+                />
+                {state?.fieldErrors?.date && (
+                  <p className="text-red-500 text-xs mt-1">{state.fieldErrors.date[0]}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                  カテゴリ
+                </label>
+                <input
+                  type="text"
+                  id="category"
+                  name="category"
+                  required
+                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none ${
+                    state?.fieldErrors?.category ? "border-red-500" : ""
+                  }`}
+                  placeholder="Tech, Life, etc."
+                />
+                {state?.fieldErrors?.category && (
+                  <p className="text-red-500 text-xs mt-1">{state.fieldErrors.category[0]}</p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
+                タグ (カンマ区切り)
+              </label>
+              <input
+                type="text"
+                id="tags"
+                name="tags"
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none ${
+                  state?.fieldErrors?.tags ? "border-red-500" : ""
+                }`}
+                placeholder="Next.js, React, Tailwind"
+              />
+              {state?.fieldErrors?.tags && (
+                <p className="text-red-500 text-xs mt-1">{state.fieldErrors.tags[0]}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 mb-1">
+                アイキャッチ画像URL
+              </label>
+              <input
+                type="text"
+                id="coverImage"
+                name="coverImage"
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none ${
+                  state?.fieldErrors?.coverImage ? "border-red-500" : ""
+                }`}
+                placeholder="https://example.com/image.jpg"
+              />
+              {state?.fieldErrors?.coverImage && (
+                <p className="text-red-500 text-xs mt-1">{state.fieldErrors.coverImage[0]}</p>
               )}
             </div>
 
