@@ -70,9 +70,9 @@ Description: 指定された Issue ID とタスク概要に基づき、適切な
      ```
    - 出力が `BRANCH_NAME` と一致することを確認する。
 
-10. **実装計画書の生成**
+10. **Implementation Plan の生成**
 
-    - **CRITICAL Instruction:** `TASK_DESC` の内容および現在のコードベースを深く分析し、このタスクを遂行するための実装計画を Conversation で依頼する。
+    - **CRITICAL Instruction:** `TASK_DESC` の内容および現在のコードベースを深く分析し、このタスクを遂行するための Implementation Plan を作成する命令を Conversation で実行する。
 
 11. **完了通知**
     - ユーザーに処理の完了を伝えるため、ターミナルに以下のメッセージを出力する。
