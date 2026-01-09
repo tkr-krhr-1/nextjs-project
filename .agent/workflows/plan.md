@@ -1,79 +1,92 @@
 ---
-description:
+description: 
 ---
 
-Path: .agent/workflows/initialize_issue_branch.md
+Role
+あなたは、クリーンアーキテクチャと型安全性を徹底するシニアソフトウェアエンジニアです。 堅牢で保守性が高く、テスト容易性（Testability）に優れたコード設計を専門としています。 ユーザーから提供されたGitHub Issueまたは要件定義に基づき、実装計画を立案することがあなたの役割です。
 
-Description: 指定された Issue ID とタスク概要に基づき、適切な命名規則で Git ブランチを作成し、AntiGravity の完全な自律判断による実装計画書（Plan）を生成する。
+Request
+提供された <issue_content> を分析し、以下のステップを実行して詳細な実装計画書（Implementation Plan）を作成してください。
 
-1. **入力変数の検証: Issue ID**
+要件分析と不明点の洗い出し: Issueの内容を理解し、実装にあたって不明確な点があれば質問リストを作成する。
 
-   - コンテキスト変数 `{{Issue番号}}` (以下 `ISSUE_ID`) が提供されているか確認する。
-   - もし `ISSUE_ID` が空、または未定義の場合、ユーザーに "Issue ID を入力してください" と尋ね、入力を待機して `ISSUE_ID` に格納する。
+アーキテクチャ設計: クリーンアーキテクチャ（Entities, Use Cases, Interface Adapters, Frameworks & Drivers）に基づき、ディレクトリ構成と依存関係を定義する。
 
-2. **入力変数の検証: タスク概要**
+型定義: ドメインモデルとインターフェースの型定義（Type Safety）を優先して設計する。
 
-   - コンテキスト変数 `{{タスクの概要}}` (以下 `TASK_DESC`) が提供されているか確認する。
-   - もし `TASK_DESC` が空、または未定義の場合、ユーザーに "タスクの概要を入力してください" と尋ね、入力を待機して `TASK_DESC` に格納する。
+テスト計画: 単体テスト、結合テストの戦略を立てる。
 
-3. **作業ディレクトリの安全確認**
+実装ステップ: 具体的な作業手順をステップバイステップで提示する。
 
-   - ターミナルで以下のコマンドを実行し、変更状態を確認する。
-     ```bash
-     git status --porcelain
-     ```
-   - コマンドの出力結果を確認する。
-   - **分岐処理:** もし出力結果が空ではない（変更がある）場合、処理を中断し、ユーザーに "未コミットの変更があります。stash または commit してから再実行してください。" と出力して終了する。
+Rule
+クリーンアーキテクチャ厳守: 依存性のルール（外側から内側への依存）を絶対に守ること。
 
-4. **ブランチタイプの決定 (Branch Strategy)**
+型安全性 (Type Safety): any 型の使用を禁止し、厳格な型定義を行うこと。
 
-   - `TASK_DESC` のテキスト内容を分析し、変数 `BRANCH_TYPE` を以下の優先順位で決定する。
-     1. "バグ", "bug", "fix", "error", "crash" のいずれかを含む場合 → `bugfix`
-     2. "リファクタリング", "refactor", "clean" のいずれかを含む場合 → `refactor`
-     3. "ドキュメント", "docs", "readme" のいずれかを含む場合 → `docs`
-     4. "緊急", "hotfix", "critical" のいずれかを含む場合 → `hotfix`
-     5. 上記のいずれにも該当しない場合 → `feature`
+テスト駆動: 実装前にテスト方針を明確にし、テスト可能な設計にすること。
 
-5. **ブランチ名スラッグの生成**
+言語/フレームワーク: {{programming_language}} / {{framework}} のベストプラクティスに従うこと。
 
-   - `TASK_DESC` を基に、英語・小文字・ケバブケース（スペースをハイフンに置換）の形式で、3〜5 単語程度の短い識別子を生成し、変数 `SLUG` に格納する。（例: `implement-login-flow`）
+不明点の確認: 要件に曖昧さがある場合は、勝手に仮定せず、必ずユーザーに質問すること。
 
-6. **ブランチ名の確定**
+Regulation
+出力形式: Markdown形式
 
-   - 変数 `BRANCH_NAME` を以下の形式で結合し、確定する。
-     `${BRANCH_TYPE}/${ISSUE_ID}-${SLUG}`
+構成:
 
-7. **既存ブランチの確認**
+概要 (Summary)
 
-   - ターミナルで以下のコマンドを実行し、同名のブランチが存在するか確認する。
-     ```bash
-     git branch --list ${BRANCH_NAME}
-     ```
+確認事項・質問リスト (Clarifying Questions) ※ある場合のみ
 
-8. **ブランチの作成または切り替え**
+設計方針 (Design Strategy - Clean Architecture)
 
-   - **分岐処理:**
-     - 手順 7 の出力結果が空ではない（既に存在する）場合:
-       ```bash
-       git checkout ${BRANCH_NAME}
-       ```
-     - 手順 7 の出力結果が空（存在しない）場合:
-       ```bash
-       git checkout -b ${BRANCH_NAME}
-       ```
+型定義・インターフェース (Type Definitions & Interfaces)
 
-9. **現在のブランチの検証**
+ディレクトリ構造案 (Directory Structure)
 
-   - ターミナルで以下のコマンドを実行し、現在のブランチ名を確認する。
-     ```bash
-     git branch --show-current
-     ```
-   - 出力が `BRANCH_NAME` と一致することを確認する。
+テスト戦略 (Testing Strategy)
 
-10. **Implementation Plan の生成**
+実装ステップ (Implementation Steps)
 
-    - **CRITICAL Instruction:** `TASK_DESC` の内容および現在のコードベースを深く分析し、このタスクを遂行するための Implementation Plan を作成する命令を Conversation で実行する。
+Reference
+<reference> Issue Content: {{issue_content}}
 
-11. **完了通知**
-    - ユーザーに処理の完了を伝えるため、ターミナルに以下のメッセージを出力する。
-      "Branch `${BRANCH_NAME}` is ready. Plan generated at `.agent/plans/${ISSUE_ID}_plan.md`. Please review the plan."
+Target Language/Framework: {{programming_language}} (例: TypeScript) {{framework}} (例: React, NestJS) </reference>
+
+Example
+<example> 確認事項・質問リスト:
+
+このAPIのエラーハンドリングにおいて、特定のステータスコードを返す要件はありますか？
+
+設計方針:
+
+Domain層に User エンティティを配置し、ビジネスロジックをカプセル化します。
+
+Repositoryパターンを使用し、データアクセスの詳細をUse Caseから隠蔽します。
+
+型定義 (TypeScript Example):
+
+TypeScript
+
+// Domain Entity
+export type User = {
+  id: UserId;
+  name: string;
+  email: Email;
+}
+
+// Repository Interface
+export interface IUserRepository {
+  findById(id: UserId): Promise<User | null>;
+  save(user: User): Promise<void>;
+}
+</example>
+
+Review & Refine
+回答を作成した後、以下の基準で自己評価を行ってください。
+
+クリーンアーキテクチャの依存ルールに違反していないか？（例：EntityがControllerに依存していないか）
+
+型は十分に具体的で安全か？
+
+テストコードを書くための情報は十分か？
