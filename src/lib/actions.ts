@@ -1,13 +1,10 @@
 "use server";
 
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { postSchema } from "./schema";
-
-const postsDirectory = path.join(process.cwd(), "content/posts");
+import { FilePostRepository } from "../infrastructure/repositories/FilePostRepository";
+import { CreatePostUseCase } from "../use-cases/CreatePostUseCase";
 
 export type ActionState = {
   error?: string;
@@ -43,41 +40,34 @@ export async function createPost(prevState: ActionState, formData: FormData): Pr
     return { error: "認証に失敗しました。パスワードが正しくありません。" };
   }
 
-  const filePath = path.join(postsDirectory, `${slug}.mdx`);
-
-  // 3. 重複チェック
-  if (fs.existsSync(filePath)) {
-    return {
-      fieldErrors: {
-        slug: ["同じスラッグの記事が既に存在します。"],
-      },
-    };
-  }
-
-  // 4. ファイル生成
+  // 3. Use Case の実行
   try {
-    const tagsArray = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
+    const repository = new FilePostRepository();
+    const useCase = new CreatePostUseCase(repository);
 
-    const fileContent = matter.stringify(content, {
+    await useCase.execute({
       title,
-      date,
+      slug,
       description,
+      date,
       category,
-      tags: tagsArray,
+      tags,
       coverImage: coverImage || "",
+      content,
     });
-
-    if (!fs.existsSync(postsDirectory)) {
-      fs.mkdirSync(postsDirectory, { recursive: true });
-    }
-
-    fs.writeFileSync(filePath, fileContent, "utf8");
   } catch (error) {
+    if (error instanceof Error && error.message === "ALREADY_EXISTS") {
+      return {
+        fieldErrors: {
+          slug: ["同じスラッグの記事が既に存在します。"],
+        },
+      };
+    }
     console.error("Failed to create post:", error);
     return { error: "記事の保存中にエラーが発生しました。" };
   }
 
-  // 5. キャッシュ更新とリダイレクト
+  // 4. キャッシュ更新とリダイレクト
   revalidatePath("/blog");
   redirect("/blog");
 }
